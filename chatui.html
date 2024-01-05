@@ -633,8 +633,8 @@
     </div>
 
     <script>
-        const input = document.querySelector('input');
-        const button = document.querySelector('button');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
         const chatArea = document.querySelector('.flex-1');
 
         function addMessage(text, name) {
@@ -654,20 +654,36 @@
             newMessage.appendChild(messageContent);
 
             chatArea.appendChild(newMessage);
-
-            // 스크롤을 맨 아래로 이동시키는 코드를 추가합니다.
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            input.value = '';
+            userInput.value = '';
         }
 
-        button.addEventListener('click', function () {
+        function sendRequest() {
+            $.ajax({
+                url: 'https://1d82371b-c9c7-4e83-b59d-ad7ac9252146-00-fn7eqr3hypll.sisko.replit.dev/get_response',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'user_input': userInput.value }),
+                success: function (response) {
+                    const aiResponse = response.ai_response;
+                    addMessage(aiResponse, "AI");
+                },
+                error: function (xhr, status, error) {
+                    console.error('요청에 실패했습니다. 상태 코드:', xhr.status);
+                }
+            });
+        }
+
+        sendButton.addEventListener('click', function () {
             addMessage(input.value, "user1");
+            sendRequest();
         });
 
-        input.addEventListener('keypress', function (e) {
+        userInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 addMessage(input.value, "user1");
+                sendRequest();
             }
         });
     </script>
