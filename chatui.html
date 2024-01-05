@@ -3,6 +3,7 @@
 
 <head>
     <title>이미지 공유 사이트</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         *,
         ::before,
@@ -602,20 +603,8 @@
 
 <body>
     <div class="m-auto flex h-[100vh] w-[56.25vh] flex-col bg-[#80e0a1] rounded-lg">
-        <div class="rounded-t-lg bg-black p-4 text-xl font-bold text-white shadow-md">abc chat</div>
+        <div class="rounded-t-lg bg-black p-4 text-xl font-bold text-white shadow-md">GetAi Chat</div>
         <div class="flex-1 space-y-4 overflow-y-auto p-3">
-            <div class="flex items-start space-x-2 rounded-lg bg-white p-2 shadow-sm">
-                <img class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
-                    src="https://playentry.org/uploads/87/4w/874wed1gklsv5s5w003hf51f2bgj6ui2.svg" alt="user1"></img>
-                <div class="flex flex-col"><span class="text-sm font-medium">user1</span><span class="text-sm">hi my
-                        name is user 1 what is your name?</span></div>
-            </div>
-            <div class="flex items-start space-x-2 rounded-lg bg-white p-2 shadow-sm">
-                <img class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full"
-                    src="https://playentry.org/uploads/87/4w/874wed1gklsv5s5w003hf51f2bgj6ui2.svg" alt="user2"></img>
-                <div class="flex flex-col"><span class="text-sm font-medium">user2</span><span class="text-sm">my name
-                        is user2</span></div>
-            </div>
         </div>
         <div class="mt-4 flex items-center rounded-b-lg bg-white p-2 shadow-md">
             <input id="userInput"
@@ -634,21 +623,29 @@
     </div>
 
     <script>
-        const userInput = document.getElementById('userInput');
-        const sendButton = document.getElementById('sendButton');
-        const chatArea = document.querySelector('.flex-1');
+        var userInput = document.getElementById('userInput');
+        var sendButton = document.getElementById('sendButton');
+        var chatArea = document.querySelector('.flex-1');
 
         function addMessage(text, name) {
+            console.log(text)
             const newMessage = document.createElement('div');
             newMessage.classList.add('flex', 'items-start', 'space-x-2', 'rounded-lg', 'bg-white', 'p-2', 'shadow-sm');
 
             const messageContent = document.createElement('div');
             messageContent.classList.add('flex', 'flex-col');
+            text = text.replace(/\n/g, '<br>'); // 줄바꿈 문자를 HTML 줄바꿈 태그로 변환
             messageContent.innerHTML = `<span class="text-sm font-medium">${name}</span><span class="text-sm">${text}</span>`;
+
+            messageContent.style.whiteSpace = 'pre-wrap'; // 추가된 코드
 
             const img = document.createElement('img');
             img.classList.add('relative', 'flex', 'h-10', 'w-10', 'shrink-0', 'overflow-hidden', 'rounded-full');
-            img.src = "https://playentry.org/uploads/87/4w/874wed1gklsv5s5w003hf51f2bgj6ui2.svg";
+            if (name == "GetAi") {
+                img.src = "https://playentry.org/uploads/a5/53/a5538186lqvvafb7297k5991fbfpe2bx.png";
+            } else {
+                img.src = "https://playentry.org/uploads/87/4w/874wed1gklsv5s5w003hf51f2bgj6ui2.svg";
+            }
             img.alt = name;
 
             newMessage.appendChild(img);
@@ -660,34 +657,47 @@
             userInput.value = '';
         }
 
-        function sendRequest() {
+        function sendRequest(input) {
             $.ajax({
                 url: 'https://1d82371b-c9c7-4e83-b59d-ad7ac9252146-00-fn7eqr3hypll.sisko.replit.dev/get_response',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ 'user_input': userInput.value }),
+                data: JSON.stringify({ 'user_input': input }),
+
+                beforeSend: function () {
+                    sendButton.textContent = "로딩중...";
+                    sendButton.disabled = true;
+                    userInput.disabled = true;
+                },
                 success: function (response) {
-                    const aiResponse = response.ai_response;
-                    addMessage(aiResponse, "AI");
+                    var aiResponse = response.ai_response;
+                    console.log(aiResponse)
+                    addMessage(aiResponse, "GetAi");
+                    sendButton.textContent = "전송";
+                    sendButton.disabled = false;
+                    userInput.disabled = false;
                 },
                 error: function (xhr, status, error) {
                     console.error('요청에 실패했습니다. 상태 코드:', xhr.status);
+                    sendButton.textContent = "전송";
+                    sendButton.disabled = false;
+                    userInput.disabled = false;
                 }
             });
         }
 
         sendButton.addEventListener('click', function () {
-            addMessage(userInput.valu, "user1");
-            sendRequest();
+            input = userInput.value
+            addMessage(input, "user1");
+            sendRequest(input);
         });
 
         userInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                addMessage(userInput.valu, "user1");
-                sendRequest();
+                input = userInput.value
+                addMessage(input, "User");
+                sendRequest(input);
             }
         });
     </script>
 </body>
-
-</html>
