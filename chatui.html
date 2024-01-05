@@ -618,9 +618,9 @@
             </div>
         </div>
         <div class="mt-4 flex items-center rounded-b-lg bg-white p-2 shadow-md">
-            <input
+            <input id="userInput"
                 class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full flex-1 rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="ask anything" /><button
+                placeholder="ask anything" /><button id="sendButton"
                 class="ring-offset-background focus-visible:ring-ring hover:bg-primary/90 ml-2 inline-flex h-10 items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -630,6 +630,7 @@
                 </svg>
             </button>
         </div>
+    </div>
     </div>
 
     <script>
@@ -676,13 +677,13 @@
         }
 
         sendButton.addEventListener('click', function () {
-            addMessage(input.value, "user1");
+            addMessage(userInput.valu, "user1");
             sendRequest();
         });
 
         userInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                addMessage(input.value, "user1");
+                addMessage(userInput.valu, "user1");
                 sendRequest();
             }
         });
